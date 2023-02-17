@@ -4,6 +4,18 @@
 
 # Car Dealship
 
+Initial comands
+
+```
+npm i
+
+//Start dev
+npm run start:dev
+
+//Start prod
+npm run start:prod
+```
+
 Populate DB
 
 ```
