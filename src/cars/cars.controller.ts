@@ -1,18 +1,18 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Patch,
   Post,
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
+import { CreateCarDto, UpdateCarDto } from './dto';
 
-// El controller es el archivo que va a contener todas las rutas de nuestro end-point
 @Controller('cars')
+//@UsePipes(ValidationPipe)
 export class CarsController {
   // Forma usual de hacer un constructor
   // private readonly carsService: CarsService;
@@ -21,7 +21,6 @@ export class CarsController {
   // }
 
   //Nueva forma de hacer uin constructor
-
   constructor(private readonly carsService: CarsService) {}
 
   //Get car
@@ -32,32 +31,29 @@ export class CarsController {
 
   //Get car by id
   @Get(':id')
-  getCarById(@Param('id', ParseIntPipe) id: number) {
+  getCarById(@Param('id', new ParseUUIDPipe({ version: '5' })) id: string) {
     console.log({ id });
     return this.carsService.findOneCarsById(id);
   }
 
   //Create
   @Post()
-  createCar(@Body() body: any) {
-    return body;
+  createCar(@Body() createCarDto: CreateCarDto) {
+    return this.carsService.create(createCarDto);
   }
 
   //Update
   @Patch(':id')
-  updateCar(@Body() body: any, @Param('id', ParseIntPipe) id: number) {
-    return {
-      id,
-      body,
-    };
+  updateCar(
+    @Body() updateCarDto: UpdateCarDto,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.carsService.update(updateCarDto, id);
   }
 
   //Delete
   @Delete(':id')
-  deleteCar(@Param('id', ParseIntPipe) id: number) {
-    return {
-      delete: true,
-      id,
-    };
+  deleteCar(@Param('id', ParseUUIDPipe) id: string) {
+    return this.carsService.delete(id);
   }
 }
